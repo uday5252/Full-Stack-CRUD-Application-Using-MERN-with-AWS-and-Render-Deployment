@@ -8,6 +8,7 @@ app.use(Express.urlencoded())
 app.use(Cors())
 app.use(Express.json())
 
+
 // JSON Format --> Javascript Object
 
 // json()
@@ -17,28 +18,29 @@ app.use(Express.json())
 // json() --> jsonData ===> Javascript Object(Quotes info)
 // end point --> function which actually collect the data from the front end
 
-Mongoose.connect("mongodb://localhost:27017/studentdatabase")
+// Mongoose.connect("mongodb://localhost:27017/studentdatabase")
+Mongoose.connect("mongodb+srv://student:studentstudent@cluster0.9nw5aik.mongodb.net/studentdatabase?retryWrites=true&w=majority")
 
 //Create a Blueprint/Schema
-
 const StudentSchema = new Mongoose.Schema({
-    "rollNo": {
+    rollNo: {
         type: Number,
-        required: true
+        unique: true,
+        required: [ true, "Rollno is compulsory" ]
     },
-    "name": {
+    name: {
         type: String,
-        required: true,
+        required: [ true, "Name is compulsory" ],
         minlength: 3,
         maxlength: 50
     },
-    "age": {
+    age: {
         type: Number,
-        required: true,
+        required: [ true, "Age is compulsory" ],
     },
-    "city": {
+    city: {
         type: String,
-        required: true,
+        required: [ true, "City is compulsory" ],
         minlength: 3,
         maxlength: 50,
         // validate: {
@@ -66,10 +68,10 @@ app.post("/collect", function(req, res)
 
     //Save/Insert the data
     const studentData = new StudentModel({
-        "rollNo": myRollNo,
-        "name": myName,
-        "age": myAge,
-        "city": myCity
+        rollNo: myRollNo,
+        name: myName,
+        age: myAge,
+        city: myCity
     })
 
     studentData.save().then(function(output)
@@ -87,16 +89,32 @@ app.get("/read", async function(req, res)
     res.send(readData)
 })
 
-app.post("/read/data", async function(req, res)
+app.get("/read/data/:id", async function(req, res)
 {
-    const id = req.body.studentId
-    const studentData = await StudentModel.find({rollNo: id})
+    const studentId = req.params.id
+    const studentData = await StudentModel.find({rollNo: studentId})
     res.send(studentData)
+})
+
+app.delete("/delete/data/:id", async function(req, res)
+{
+    //Collect the id sent from the front end and then delete that particular detail
+    const studentId = req.params.id
+    const confirmation = await StudentModel.deleteOne({rollNo: studentId})
+
+    if(confirmation.deletedCount == 1)
+    {
+        res.send("Student Data is successfully deleted!")
+    }
+    else
+    {
+        res.send("Student Data is not successfully deleted!")
+    }
 })
 
 app.listen(9000, function()
 {
-    console.log("Server is running on the port 3000!")
+    console.log("Server is running on the port 9000!")
 })
 
 // Status Code --> Tells the status of the response
@@ -110,3 +128,7 @@ app.listen(9000, function()
 
 // If the data is updated by the server in the database --> put/patch ==> updation is successfull(200) || 400
 // If the data is deleted by the server from the database --> delete ==> deletion is successfull(204) || 404
+
+
+// Microservices
+// Create ConfigServer --> Collect all the configuration related information present in out project and stores it in github

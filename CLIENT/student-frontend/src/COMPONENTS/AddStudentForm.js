@@ -1,6 +1,7 @@
 import React from 'react'
 import "../AddStudentForm.css"
 import Axios from "axios"
+import { SERVER_ACCESS_URL } from '../constans'
 
 const AddStudentForm = () => 
 {
@@ -27,7 +28,7 @@ const AddStudentForm = () =>
         // the entire page after form submission
         
         //LOGIC TO SEND THE DATA TO THE SERVER(/collect)
-       const result = await Axios.post("http://localhost:9000/collect", formData )
+       const result = await Axios.post(`${SERVER_ACCESS_URL}/collect`, formData )
        console.log(result)
     //    setMessage(result)
         // formData(Javascript Object) --> JSON Format --> Reaching the server

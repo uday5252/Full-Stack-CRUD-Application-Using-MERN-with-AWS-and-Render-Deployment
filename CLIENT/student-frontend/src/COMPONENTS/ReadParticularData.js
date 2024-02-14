@@ -1,6 +1,7 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
 import Axios from "axios"
+import { SERVER_ACCESS_URL } from '../constans'
 
 function ReadParticularData() 
 {
@@ -13,7 +14,7 @@ function ReadParticularData()
     
     React.useEffect(function()
     {
-        Axios.post("http://localhost:9000/read/data", { studentId: id })
+        Axios.get(`${SERVER_ACCESS_URL}/read/data/${id}`)
         .then(function(output)
         {
             setParticularStudentData(output.data)
@@ -21,7 +22,7 @@ function ReadParticularData()
         {
             console.log(error)
         })
-    })
+    }, [])
     
     return (
         <div>
